@@ -1,16 +1,17 @@
 CLASSES = {
-  0: 'class0',
-  1: 'class1',
-  2: 'class2',
-  3: 'class3',
-  4: 'class4',
+  0: 'Alma',
+  1: 'Law',
+  2: 'Lion',
+  3: 'Sandial'
 };
 
 const MODEL_PATH =
     'model.json';
 
-const IMAGE_SIZE = 192;
-const TOPK_PREDICTIONS = 5;
+// const IMAGE_SIZE = 192;
+const IMAGE_HEIGHT = 270
+const IMAGE_WIDTH = 480
+const TOPK_PREDICTIONS = 3;
 
 let my_model;
 const demo = async () => {
@@ -21,19 +22,19 @@ const demo = async () => {
   // Warmup the model. This isn't necessary, but makes the first prediction
   // faster. Call `dispose` to release the WebGL memory allocated for the return
   // value of `predict`.
-  my_model.predict(tf.zeros([1, IMAGE_SIZE, IMAGE_SIZE, 3])).dispose();
+  my_model.predict(tf.zeros([1, IMAGE_HEIGHT, IMAGE_WIDTH, 3])).dispose();
 
   status('');
 
-  // Make a prediction through the locally hosted cat.jpg.
-  const catElement = document.getElementById('cat');
-  if (catElement.complete && catElement.naturalHeight !== 0) {
-    predict(catElement);
-    catElement.style.display = '';
+  // Make a prediction through the locally hosted demo.jpg.
+  const demoElement = document.getElementById('demo');
+  if (demoElement.complete && demoElement.naturalHeight !== 0) {
+    predict(demoElement);
+    demoElement.style.display = '';
   } else {
-    catElement.onload = () => {
-      predict(catElement);
-      catElement.style.display = '';
+    demoElement.onload = () => {
+      predict(demoElement);
+      demoElement.style.display = '';
     }
   }
 
@@ -63,8 +64,7 @@ async function predict(imgElement) {
     const normalized = img.div(255.0);
 
     // Reshape to a single-element batch so we can pass it to predict.
-    const batched = normalized.reshape([1, IMAGE_SIZE, IMAGE_SIZE, 3]);
-
+    const batched = normalized.reshape([1, IMAGE_HEIGHT, IMAGE_WIDTH, 3]);
     startTime2 = performance.now();
     // Make a prediction through my_model.
     return my_model.predict(batched);
@@ -165,8 +165,8 @@ filesElement.addEventListener('change', evt => {
       // Fill the image & call predict.
       let img = document.createElement('img');
       img.src = e.target.result;
-      img.width = IMAGE_SIZE;
-      img.height = IMAGE_SIZE;
+      img.width = IMAGE_WIDTH;
+      img.height = IMAGE_HEIGHT;
       img.onload = () => predict(img);
     };
 
